@@ -1,6 +1,12 @@
 import json
 
+
+
 def edit_username(new_user_name, ID, loc = ''):
+    msg_fail = '有点新意好不好嘛'
+    msg_success = '更改成功~'
+    msg_unregiter = '请先注册'
+    
     filename = loc + '用户数据\\user.txt'
     try:
         with open(filename) as file_object:
@@ -10,11 +16,14 @@ def edit_username(new_user_name, ID, loc = ''):
             json.dump({}, file_object)
     if str(ID) in user_list.keys():
         if new_user_name == user_list[str(ID)]:
-            print('有点新意好不好嘛')
+            print(msg_fail)
+            return msg_fail
         else:
             user_list[str(ID)] = new_user_name
             with open(filename, 'w') as file_object:
                 json.dump(user_list, file_object)
-            print('更改成功~')
+            print(msg_success)
+            return msg_success
     else:
-        print('请先注册')
+        print(msg_unregiter)
+        return msg_unregiter
