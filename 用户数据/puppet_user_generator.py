@@ -1,14 +1,14 @@
 import json
 import random
+import string
 
 #-----------------------------------------------------------------------------------
 
 # constants
 max_len_of_username = 16
-smallest_ascii = 32
-largest_ascii = 126
 smallest_id = 10000
 largest_id = 99999999
+allowed_characters = string.ascii_letters + string.digits + '-' + '_'
 
 #-----------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ for i in range(0, int(n_of_users)):
     
     # generate random username with random length from 1 to max_len_of_username
     for j in range(1, max_len_of_username + 1):
-        temp_str += chr(random.randint(smallest_ascii, largest_ascii + 1))
+        temp_str += random.choice(allowed_characters)
     
     puppet_users[random.randint(smallest_id, largest_id)] = temp_str
 
