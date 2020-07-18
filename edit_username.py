@@ -1,6 +1,6 @@
 import json
 
-
+#edit_username(新用户名，QQ，素材存放位置) 返回值str（提示信息）
 
 def edit_username(new_user_name, ID, loc = ''):
     msg_fail = '有点新意好不好嘛'
