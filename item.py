@@ -1,6 +1,6 @@
 import json
 
-
+#item_add(QQ,物品名称，素材位置，添加数量)
 def item_add(ID ,item_name , loc = '' , n = 10000):
     
     filename = loc+ '用户数据\\' + ID + '.json'
