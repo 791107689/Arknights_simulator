@@ -1,8 +1,8 @@
-
 import random
 import json
 
-
+#look_for(QQ号,素材存放位置)
+#寻访干员 未注册用户运行时返回str（提示注册） 已注册用户返回dic（储存干员信息）
 
 def look_for(ID,loc = ''):
 
