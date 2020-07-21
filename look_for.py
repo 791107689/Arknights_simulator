@@ -28,10 +28,16 @@ def look_for(ID,loc = ''):
     n = user_data['标准寻访次数']
 
     # 计算真实爆率
-    real_six_star = six_star*n + six_star
-    real_five_star = ( (1-real_six_star) / (1-six_star) ) * five_star
-    real_four_star = ( (1-real_six_star) / (1-six_star) ) * four_star
-    real_three_star = ( (1-real_six_star) / (1-six_star) ) * three_star
+    if n >= 50:
+        real_six_star = six_star*n + six_star
+        real_five_star = ( (1-real_six_star) / (1-six_star) ) * five_star
+        real_four_star = ( (1-real_six_star) / (1-six_star) ) * four_star
+        real_three_star = ( (1-real_six_star) / (1-six_star) ) * three_star
+    else:
+        real_six_star = 0.02
+        real_five_star = 0.08
+        real_four_star = 0.5
+        real_three_star = 0.4
 
     # 更新用户标准寻访次数
     n += 1
