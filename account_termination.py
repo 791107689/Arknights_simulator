@@ -17,6 +17,6 @@ def account_termination(ID, loc = ''):
             json.dump(user_list, file_object)
         filename = loc + '用户数据\\' + str(ID) + '.json'
         os.remove(filename)
-        print('Dr.' + user_name + '已离职，相关档案已销毁且无法恢复')
+        return 'Dr.' + user_name + '已离职，相关档案已销毁且无法恢复'
     else:
-        print('用户不存在')    
+        return '用户不存在'
