@@ -1,3 +1,4 @@
+from item import item_add
 from PIL import Image
 import random
 import json
@@ -15,6 +16,7 @@ def look_for(ID,loc = ''):
     four_star = 0.5
     three_star = 0.4
 
+    # fetch user_data and check user availability
     filename = loc+ '用户数据\\' + ID + '.json'
     try:
         with open(filename) as file_object:
@@ -23,7 +25,7 @@ def look_for(ID,loc = ''):
         return '请先注册账号\n注册方式：发送“注册 这里填用户名”'
     n = user_data['标准寻访次数']
 
-
+    # 计算真实爆率
     real_six_star = six_star*n + six_star
     real_five_star = ( (1-real_six_star) / (1-six_star) ) * five_star
     real_four_star = ( (1-real_six_star) / (1-six_star) ) * four_star
@@ -32,7 +34,7 @@ def look_for(ID,loc = ''):
     n += 1
     user_data['标准寻访次数'] = n
 
-
+    # 更新用户寻访次数
     with open(filename, 'w') as file_object:
         json.dump(user_data, file_object)
 
@@ -51,13 +53,15 @@ def look_for(ID,loc = ''):
     else:
         filename = loc + r'标准寻访\标准寻访_三星.txt'
         inf['稀有度'] = '★★★'
-        
+    
+    # 获取抽中星级干员列表
     with open(filename) as file_object:
         str = file_object.read()
         
     card_list = []
     card = ''
 
+    # 整理干员列表为list
     for s in str:
         if s !=  '/':
             card += s
@@ -65,13 +69,47 @@ def look_for(ID,loc = ''):
             card_list.append(card)
             card = ''
     #print(card_list)
+    
+    # 抽取干员
+    inf['干员'] = random.choice(card_list)
+    
+    # 获取或初始化干员数据
+    if '干员列表' in user_data.keys():
+        if not inf['干员'] in user_data['干员列表'].keys():
+            user_data['干员列表'][inf['干员']] = {'获取次数':0}
+    else:
+        user_data['干员列表'][inf['干员']] = {'获取次数':0}
+    
+    user_data['干员列表'][inf['干员']]['获取次数'] += 1
+    
 
+    # 给予物品
+    if user_data['干员列表'][inf['干员']]['获取次数'] == 1:
+        item_add(ID, '高级凭证', loc, 1)
+    elif user_data['干员列表'][inf['干员']]['获取次数'] > 1:
+        item_add(ID, inf['干员'] + '的信物', loc, 1)
+        if (inf['稀有度'] == '★') or (inf['稀有度'] == '★★'):
+            item_add(ID, '资质凭证', loc, 1)
+        elif inf['稀有度'] == '★★★':
+            item_add(ID, '资质凭证', loc, 5)
+        elif inf['稀有度'] == '★★★★':
+            item_add(ID, '资质凭证', loc, 30)
+        elif inf['稀有度'] == '★★★★★':
+            if user_data['干员列表'][inf['干员']]['获取次数'] in range(2, 7):
+                item_add(ID, '高级凭证', loc, 5)
+            elif user_data['干员列表'][inf['干员']]['获取次数'] > 6:
+                item_add(ID, '高级凭证', loc, 8)
+        elif inf['稀有度'] == '★★★★★★':
+            if user_data['干员列表'][inf['干员']]['获取次数'] in range(2, 7):
+                item_add(ID, '高级凭证', loc, 10)
+            elif user_data['干员列表'][inf['干员']]['获取次数'] > 6:
+                item_add(ID, '高级凭证', loc, 15)
+    
+    # 更新用户数据
     filename = loc+ '用户数据\\' + ID + '.json'
     with open(filename, 'w') as file_object:
-        json.dump(user_data, file_object)
+        json.dump(user_data, file_object)    
     
-    inf['干员'] = random.choice(card_list)
-
     return inf
 
 def look_for_ten(ID,loc = ''):
