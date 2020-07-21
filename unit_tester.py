@@ -1,5 +1,5 @@
-from account_termination import account_termination as acct
+from look_for import look_for, look_for_ten
 
 test_ID = input('Enter ID: ')
 
-acct(test_ID)
+look_for(test_ID)

@@ -1,6 +1,7 @@
 import json
 import random
 import string
+from register import register
 
 #-----------------------------------------------------------------------------------
 
@@ -18,7 +19,7 @@ n_of_users = input('Enter the number of puppet users you want to generate: ')
 #-----------------------------------------------------------------------------------
 
 # initialization
-puppet_users = {'admin_id':'admin'}  # init users' dictionary
+# puppet_users = {'admin_id':'admin'}  # init users' dictionary
 
 #-----------------------------------------------------------------------------------
 
@@ -30,10 +31,5 @@ for i in range(0, int(n_of_users)):
     for j in range(1, max_len_of_username + 1):
         temp_str += random.choice(allowed_characters)
     
-    puppet_users[random.randint(smallest_id, largest_id)] = temp_str
-
-#-----------------------------------------------------------------------------------
-
-# json and file handling
-with open('用户数据\\user.txt', 'w') as user_file:
-    json.dump(puppet_users, user_file)
+    register(temp_str, random.randint(smallest_id, largest_id))
+    # puppet_users[random.randint(smallest_id, largest_id)] = temp_str
