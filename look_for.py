@@ -1,5 +1,5 @@
 from item import item_add
-from PIL import Image
+# from PIL import Image
 import random
 import json
 
@@ -78,7 +78,7 @@ def look_for(ID,loc = ''):
         if not inf['干员'] in user_data['干员列表'].keys():
             user_data['干员列表'][inf['干员']] = {'获取次数':0}
     else:
-        user_data['干员列表'][inf['干员']] = {'获取次数':0}
+        user_data['干员列表'] =  {inf['干员']:{'获取次数':0}}
     
     user_data['干员列表'][inf['干员']]['获取次数'] += 1
     
@@ -110,7 +110,8 @@ def look_for(ID,loc = ''):
     with open(filename, 'w') as file_object:
         json.dump(user_data, file_object)    
     
-    return inf
+    # return inf
+    print(inf)
 
 def look_for_ten(ID,loc = ''):
     result = []
@@ -119,18 +120,19 @@ def look_for_ten(ID,loc = ''):
         result.append(look_for(ID,loc)['干员'])
 
 
-    size_x = 151
-    size_y = 443
-    box = (371, 0, 371 + size_x ,0 + size_y)
-    target = Image.new('RGB', (size_x*10 , size_y))
+    # size_x = 151
+    # size_y = 443
+    # box = (371, 0, 371 + size_x ,0 + size_y)
+    # target = Image.new('RGB', (size_x*10 , size_y))
 
-    for i in range(10):
-        pic = loc + '立绘\\' + str(result[i]) + '.png'
-        img = Image.open(pic)
-        region = img.crop(box)
-        target.paste(region,(i*size_x,0,i*size_x + size_x,size_y))
+    # for i in range(10):
+    #     pic = loc + '立绘\\' + str(result[i]) + '.png'
+    #     img = Image.open(pic)
+    #     region = img.crop(box)
+    #     target.paste(region,(i*size_x,0,i*size_x + size_x,size_y))
 
-    target.save('result.png')
-    return result
+    # target.save('result.png')
+    # return result
+    print(result)
 
 #猎蜂、阿消、空爆立绘已修正
