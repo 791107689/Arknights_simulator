@@ -1,7 +1,11 @@
 from item import item_add
 from PIL import Image
 import random
+from time import time
 import json
+
+#初始化随机数发生器
+random.seed(time())
 
 #-----------------------------------------------------------------------------------
 
@@ -10,7 +14,10 @@ import json
 
 def look_for(ID,loc = ''):
 
-    inf = {}   
+    # inf(dict)为该次抽取的干员信息
+    # '干员'(str):干员名称
+    # '稀有度'(str):干员稀有度，用"★"的数量表示
+    inf = {}
 
     # 干员爆率
     six_star = 0.02
@@ -23,7 +30,7 @@ def look_for(ID,loc = ''):
     try:
         with open(filename) as file_object:
             user_data = json.load(file_object)
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         return '请先注册账号\n注册方式：发送“注册 这里填用户名”'
     n = user_data['标准寻访次数']
 
@@ -43,49 +50,35 @@ def look_for(ID,loc = ''):
     n += 1
     user_data['标准寻访次数'] = n
     with open(filename, 'w') as file_object:
-        json.dump(user_data, file_object)
+        json.dump(user_data, file_object,ensure_ascii=False,indent=4,separators=(',',':'))
 
     # 决定欧非
     p = random.random()
     if p <= real_six_star:
-        filename = loc + r'标准寻访\标准寻访_六星.txt'
+        filename = loc + r'标准寻访\标准寻访_六星.json'
         user_data['标准寻访次数'] = 0 #保底计算相关
         inf['稀有度'] = '★★★★★★'
     elif p <= ( real_six_star + real_five_star ):
-        filename = loc + r'标准寻访\标准寻访_五星.txt'
+        filename = loc + r'标准寻访\标准寻访_五星.json'
         inf['稀有度'] = '★★★★★'
     elif p <= ( real_six_star + real_five_star + real_four_star ):
-        filename = loc + r'标准寻访\标准寻访_四星.txt'
+        filename = loc + r'标准寻访\标准寻访_四星.json'
         inf['稀有度'] = '★★★★'
     else:
-        filename = loc + r'标准寻访\标准寻访_三星.txt'
+        filename = loc + r'标准寻访\标准寻访_三星.json'
         inf['稀有度'] = '★★★'
-    
+
     # 获取抽中星级干员列表
-    with open(filename) as file_object:
-        str = file_object.read()
-    
-    # 整理干员列表为list
-    card_list = []
-    card = ''
-    for s in str:
-        if s !=  '/':
-            card += s
-        else:
-            card_list.append(card)
-            card = ''
-    #print(card_list)
-    
+    with open(filename,'r') as file_object:
+        card_list=json.load(file_object)
+
     # 抽取干员
     inf['干员'] = random.choice(card_list)
-    
+    # inf['干员']即为抽取到的干员
+
     # 获取或初始化干员数据
-    if '干员列表' in user_data.keys():
-        if not inf['干员'] in user_data['干员列表'].keys():
-            user_data['干员列表'][inf['干员']] = {'获取次数':0}
-    else:
-        user_data['干员列表'] =  {inf['干员']:{'获取次数':0}}
-    
+    if not inf['干员'] in user_data['干员列表'].keys():
+        user_data['干员列表'][inf['干员']] = {'获取次数':0}
     user_data['干员列表'][inf['干员']]['获取次数'] += 1
 
     # 给予物品
@@ -111,12 +104,12 @@ def look_for(ID,loc = ''):
                 item_add(ID, '高级凭证', loc, 10)
             elif user_data['干员列表'][inf['干员']]['获取次数'] > 6:
                 item_add(ID, '高级凭证', loc, 15)
-    
+
     # 更新用户数据
     filename = loc+ '用户数据\\' + ID + '.json'
     with open(filename, 'w') as file_object:
-        json.dump(user_data, file_object)    
-    
+        json.dump(user_data, file_object)
+
     return inf
 
 #-----------------------------------------------------------------------------------
@@ -125,19 +118,19 @@ def look_for_ten(ID,loc = ''):
     result = []
 
     for i in range(10):
-        result.append(look_for(ID,loc)['干员'])
+        result.append(look_for(ID,loc))
 
-
-    size_x = 151
-    size_y = 443
-    box = (371, 0, 371 + size_x ,0 + size_y)
-    target = Image.new('RGB', (size_x*10 , size_y))
+    size_x = 185
+    size_y = 450
+    box = (415, 0, 415 + size_x ,0 + size_y)
+    target = Image.new('RGBA', (size_x*10 , size_y))
 
     for i in range(10):
-        pic = loc + '立绘\\' + str(result[i]) + '.png'
+        pic = loc + '立绘\\' + str(result[i]['干员']) + '.png'
         img = Image.open(pic)
         region = img.crop(box)
-        target.paste(region,(i*size_x,0,i*size_x + size_x,size_y))
+        target.paste(region, (i * size_x, 0, i * size_x + size_x, size_y))
+
 
     target.save('result.png')
     return result

@@ -1,11 +1,11 @@
 import json
 
-#item_add(QQ,物品名称，素材位置，添加数量) 
+#item_add(QQ,物品名称，素材位置，添加数量)
 #item_del(QQ,物品名称，素材位置，删除数量)
 #item_check(QQ,素材位置)
 #均返回str（提示信息）
 def item_add(ID ,item_name , loc = '' , n = 10000):
-    
+
     filename = loc+ '用户数据\\' + ID + '.json'
 
     try:
@@ -16,7 +16,7 @@ def item_add(ID ,item_name , loc = '' , n = 10000):
 
     try:
         user_data['物品'][str(item_name)] += n
-    except KeyError as e:
+    except KeyError:
         user_data['物品'] = {}
         user_data['物品'][str(item_name)] = n
 
@@ -26,7 +26,7 @@ def item_add(ID ,item_name , loc = '' , n = 10000):
 
 
 def item_del(ID ,item_name , loc = '' , n = 10000):
-    
+
     filename = loc+ '用户数据\\' + ID + '.json'
 
     try:

@@ -8,9 +8,8 @@ from item import item_check
 loc = ''
 
 register('admin','admin_id')
-while(1):
-    time.sleep(1)
-    print(look_for_ten('admin_id'))
-    print(item_add('admin_id' ,'测试物品'))
-    print(item_del('admin_id' ,'测试物品'))
-    print(item_check('admin_id'))
+#进行测试
+print(look_for_ten('admin_id'))
+print(item_add('admin_id' ,'测试物品'))
+print(item_del('admin_id' ,'测试物品'))
+print(item_check('admin_id'))
