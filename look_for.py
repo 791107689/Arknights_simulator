@@ -35,8 +35,8 @@ def look_for(ID,loc = ''):
     n = user_data['标准寻访次数']
 
     # 计算真实爆率
-    if n >= 50:
-        real_six_star = six_star*n + six_star
+    if n > 50:
+        real_six_star = six_star*(n - 50) + six_star
         real_five_star = ( (1-real_six_star) / (1-six_star) ) * five_star
         real_four_star = ( (1-real_six_star) / (1-six_star) ) * four_star
         real_three_star = ( (1-real_six_star) / (1-six_star) ) * three_star
