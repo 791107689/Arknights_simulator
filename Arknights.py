@@ -1,5 +1,7 @@
 import time
-from look_for import look_for_ten
+
+#这里应该定义所有接口，以便使用时直接import Arknights即可使用这些函数
+from look_for import look_for,look_for_ten
 from register import register
 from item import item_add
 from item import item_del

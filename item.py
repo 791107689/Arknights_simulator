@@ -4,7 +4,7 @@ from register import new_Dr
 #item_add(QQ,物品名称，素材位置，添加数量)
 
 def item_add(ID ,item_name:str , loc:str = '' , n:int = 1):
-    #TODO:用os.exists改写所有try语句，因为try语句虽然能捕获异常，但是太低效了
+    #TODO:用os.path.exists改写所有try语句，因为try语句虽然能捕获异常，但是太低效了
 
     #检查用户注册
     filename = loc+ '用户数据\\' + ID + '.json'

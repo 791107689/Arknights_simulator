@@ -2,17 +2,18 @@ import json
 import os
 
 
-def account_termination(ID, loc = ''):
+def account_termination(ID, loc=''):
+    '''删除一个账户。'''
     filename = loc + '用户数据\\user.txt'
-    try:
-        with open(filename) as file_object:
-            user_list = json.load(file_object)
-    except:
+    if not os.path.exists(filename):
         with open(filename, 'w') as file_object:
             json.dump({}, file_object)
+    with open(filename) as file_object:
+        user_list = json.load(file_object)
+
     if str(ID) in user_list.keys():
         user_name = user_list[ID]
-        del user_list[ID]
+        del(user_list[ID])
         with open(filename, 'w') as file_object:
             json.dump(user_list, file_object)
         filename = loc + '用户数据\\' + str(ID) + '.json'

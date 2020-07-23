@@ -8,10 +8,10 @@ def new_Dr():
             '物品': {}
             }
 
-#注册新用户
-#register（用户名，QQ号，素材存放位置） 根据用户QQ判断是否注册过 返回str（提示信息）
 
-def register(user_name,ID,loc = ''):
+def register(user_name, ID, loc=''):
+    '''注册新用户
+    register（用户名，QQ号，素材存放位置） 根据用户QQ判断是否注册过 返回str（提示信息）'''
     filename = loc + '用户数据\\user.txt'
     try:
         with open(filename) as file_object:
