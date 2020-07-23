@@ -77,9 +77,13 @@ def look_for(ID,loc = ''):
     # inf['干员']即为抽取到的干员
 
     # 获取或初始化干员数据
-    if not inf['干员'] in user_data['干员列表'].keys():
-        user_data['干员列表'][inf['干员']] = {'获取次数':0}
-    user_data['干员列表'][inf['干员']]['获取次数'] += 1
+    try:
+        if not inf['干员'] in user_data['干员列表'].keys():
+            user_data['干员列表'][inf['干员']] = {'获取次数':0}
+        user_data['干员列表'][inf['干员']]['获取次数'] += 1
+    except:
+        user_data['干员列表'] = {}
+        user_data['干员列表'][inf['干员']] = {'获取次数':1}
 
     # 给予物品
     if user_data['干员列表'][inf['干员']]['获取次数'] == 1:  #首次抽中掉落干员及高级凭证*1
