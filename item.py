@@ -1,5 +1,5 @@
 import json
-from register import new_Dr
+from base import ItemList
 
 #item_add(QQ,物品名称，素材位置，添加数量)
 
@@ -14,22 +14,22 @@ def item_add(ID ,item_name:str , loc:str = '' , n:int = 1):
     except FileNotFoundError:
         return '请先注册账号\n注册方式：发送“注册 这里填用户名”'
     #读取数据
-    filename = loc+ '用户数据\\' + ID + '.json'
+    filename = loc+ '用户数据\\物品数据\\' + ID + '.json'
     try:
         with open(filename) as file_object:
-            user_data = json.load(file_object)
+            user_data = ItemList(json.load(file_object))
             file_object.close()
     except FileNotFoundError:
         with open(filename, 'w') as file_object:
-            user_data = new_Dr()
+            user_data = ItemList()
             json.dump(user_data, file_object)
             file_object.close()
 
     #更改数据
-    if item_name in user_data:
-        user_data['物品'][item_name] += n
+    if item_name in user_data.keys():
+        user_data[item_name] += n
     else:
-        user_data['物品'][item_name] = n
+        user_data[item_name] = n
 
 
     #更改数据
@@ -40,13 +40,13 @@ def item_add(ID ,item_name:str , loc:str = '' , n:int = 1):
     return '成功添加' + item_name + '*' + str(n)
 
 
-def item_del(ID ,item_name:str , loc = '' , n = 10000):
+def item_del(ID ,item_name:str , loc = '' , n = 1):
     #检查用户注册
     filename = loc+ '用户数据\\' + ID + '.json'
 
     try:
         with open(filename) as file_object:
-            user_data = json.load(file_object)
+            user_data = ItemList(json.load(file_object))
             file_object.close()
     except FileNotFoundError:
         return '请先注册账号\n注册方式：发送“注册 这里填用户名”'
@@ -54,7 +54,7 @@ def item_del(ID ,item_name:str , loc = '' , n = 10000):
     filename = loc+ '用户数据\\物品数据\\' + ID + '.json'
     try:
         with open(filename) as file_object:
-            user_data = json.load(file_object)
+            user_data = ItemList(json.load(file_object))
             file_object.close()
     except FileNotFoundError:
         with open(filename, 'w') as file_object:
@@ -64,6 +64,8 @@ def item_del(ID ,item_name:str , loc = '' , n = 10000):
     #更改数据
     if not (item_name in user_data)or(user_data[item_name] - n < 0):
         return item_name + '数量不足'
+    elif (user_data[item_name] - n == 0):
+        del (user_data[item_name])
     else:
         user_data[item_name] -= n
 
@@ -85,7 +87,7 @@ def item_check(ID ,loc = '' ):
     filename = loc+ '用户数据\\物品数据\\' + ID + '.json'
     try:
         with open(filename) as file_object:
-            user_data = json.load(file_object)
+            user_data = ItemList(json.load(file_object))
             file_object.close()
     except FileNotFoundError:
         with open(filename, 'w') as file_object:

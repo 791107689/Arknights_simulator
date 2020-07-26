@@ -4,6 +4,8 @@ import random
 from time import time
 import json
 
+from base import Agent, AgentList, Dr
+
 #初始化随机数发生器
 random.seed(time())
 
@@ -17,7 +19,7 @@ def look_for(ID,loc = ''):
     # inf(dict)为该次抽取的干员信息
     # '干员'(str):干员名称
     # '稀有度'(str):干员稀有度，用"★"的数量表示
-    inf = {}
+    inf = Agent()
 
     # 干员爆率
     six_star = 0.02
@@ -29,7 +31,7 @@ def look_for(ID,loc = ''):
     filename = loc+ '用户数据\\' + ID + '.json'
     try:
         with open(filename) as file_object:
-            user_data = json.load(file_object)
+            user_data = Dr(json.load(file_object))
     except FileNotFoundError:
         return '请先注册账号\n注册方式：发送“注册 这里填用户名”'
     n = user_data['标准寻访次数']
@@ -74,52 +76,59 @@ def look_for(ID,loc = ''):
 
     # 抽取干员
     inf['干员'] = random.choice(card_list)
-    # inf['干员']即为抽取到的干员
+    # inf即为抽取到的干员
 
     # 获取或初始化干员数据
     try:
-        if not inf['干员'] in user_data['干员列表'].keys():
-            user_data['干员列表'][inf['干员']] = {'获取次数':0}
-        user_data['干员列表'][inf['干员']]['获取次数'] += 1
+        if not (inf['干员'] in [i['干员'] for i in user_data['干员列表']]):
+            user_data['干员列表'].append(inf)
     except:
-        user_data['干员列表'] = {}
-        user_data['干员列表'][inf['干员']] = {'获取次数':1}
-
-    # 给予物品
-    if user_data['干员列表'][inf['干员']]['获取次数'] == 1:  #首次抽中掉落干员及高级凭证*1
-        item_add(ID, '高级凭证', loc, 1)
-    elif user_data['干员列表'][inf['干员']]['获取次数'] > 1:
-        item_add(ID, inf['干员'] + '的信物', loc, 1)    #非首次一定掉落信物
-        #中低星级非首次掉落恒定资质凭证
-        if (inf['稀有度'] == '★') or (inf['稀有度'] == '★★'):
-            item_add(ID, '资质凭证', loc, 1)
-        elif inf['稀有度'] == '★★★':
-            item_add(ID, '资质凭证', loc, 5)
-        elif inf['稀有度'] == '★★★★':
-            item_add(ID, '资质凭证', loc, 30)
-        #高星阶2~6次及>7次掉落不同数量高级凭证
-        elif inf['稀有度'] == '★★★★★':
-            if user_data['干员列表'][inf['干员']]['获取次数'] in range(2, 7):
-                item_add(ID, '高级凭证', loc, 5)
-            elif user_data['干员列表'][inf['干员']]['获取次数'] > 6:
-                item_add(ID, '高级凭证', loc, 8)
-        elif inf['稀有度'] == '★★★★★★':
-            if user_data['干员列表'][inf['干员']]['获取次数'] in range(2, 7):
-                item_add(ID, '高级凭证', loc, 10)
-            elif user_data['干员列表'][inf['干员']]['获取次数'] > 6:
-                item_add(ID, '高级凭证', loc, 15)
-
-    # 更新用户数据
-    filename = loc+ '用户数据\\' + ID + '.json'
-    with open(filename, 'w') as file_object:
-        json.dump(user_data, file_object)
+        user_data['干员列表'] = AgentList()
+        user_data['干员列表'].append(inf['干员'])
+    finally:
+        # 搜索整个干员列表，查看该干员是否被抽到过
+        filename = loc+ '用户数据\\' + ID + '.json'
+        for i in user_data['干员列表']:
+            if i['干员'] == inf['干员']:
+                #给予物品
+                if '获取次数' in i.keys():
+                    i['获取次数'] += 1
+                    inf['获取次数']=i['获取次数']
+                    #更新用户数据
+                    with open(filename, 'w') as file_object:
+                        json.dump(user_data, file_object)
+                    item_add(ID, inf['干员'] + '的信物', loc, 1)  #非首次一定掉落信物
+                    if (inf['稀有度'] == '★') or (inf['稀有度'] == '★★'):#中低星级非首次掉落恒定资质凭证
+                        item_add(ID, '资质凭证', loc, 1)
+                    elif inf['稀有度'] == '★★★':
+                        item_add(ID, '资质凭证', loc, 5)
+                    elif inf['稀有度'] == '★★★★':
+                        item_add(ID, '资质凭证', loc, 30)
+                    #高星阶2~6次及>7次掉落不同数量高级凭证
+                    elif inf['稀有度'] == '★★★★★':
+                        if i['获取次数'] in range(2, 7):
+                            item_add(ID, '高级凭证', loc, 5)
+                        elif i['获取次数'] > 6:
+                            item_add(ID, '高级凭证', loc, 8)
+                    elif inf['稀有度'] == '★★★★★★':
+                        if i['获取次数'] in range(2, 7):
+                            item_add(ID, '高级凭证', loc, 10)
+                        elif i['获取次数'] > 6:
+                            item_add(ID, '高级凭证', loc, 15)
+                else:
+                    i['获取次数'] = 1
+                    inf['获取次数']=i['获取次数']
+                    #更新用户数据
+                    with open(filename, 'w') as file_object:
+                        json.dump(user_data, file_object)
+                    item_add(ID, '高级凭证', loc, 1)#首次抽中掉落干员及高级凭证*1
 
     return inf
 
 #-----------------------------------------------------------------------------------
 
 def look_for_ten(ID,loc = ''):
-    result = []
+    result = AgentList()
 
     for i in range(10):
         result.append(look_for(ID,loc))
